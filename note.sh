@@ -29,43 +29,44 @@ if [ "$1" = "" ]; then
 fi
 
 
-case $1 in
-  # -t returns all notes
-  # print in tree format
-  list)
-    ls -R $BASE
-    exit
-  ;;
 
-  # -g <string> searches for all
-  # return list of options
-  search)
-    if [ "$2" = "" ]; then
-      echo "Need search string"
+while getopts “hls:” OPTION
+do
+  case $OPTION in
+
+    h)
+      # print usage
       printUsage
       exit
-    fi
 
-    # search file names
-    ls -R $BASE | grep "$2"
+    ;;
+    # -l returns all notes
+    # print in tree format??
+    l)
+      # list all files 1 per line
+      # pipe to fpp to select files
+      ls -d -1 $BASE/**/* | fpp
+      exit
+    ;;
 
-    # search in files
-    grep "$2" $BASE -R
+    # -s <string> searches for all
+    # return list of options
+    s)
+      # search file names
+      ls -R $BASE | grep "$OPTARG"
+
+      # search in files
+      grep "$OPTARG" $BASE -R
+
+      exit
+    ;;
+
+    # -n <string> makes a new note
 
 
-  ;;
+    # -f <string> tree output of a subfolder
 
-  # -n <string> makes a new note
+  esac
+done
 
-
-  # -f <string> tree output of a subfolder
-
-
-
-
-
-  *)
-    printUsage
-
-  ;;
-esac
+printUsage
