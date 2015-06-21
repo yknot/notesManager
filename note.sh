@@ -10,8 +10,10 @@ EDITOR=$(<editor.config)
 # print usage function
 printUsage() {
 echo "Usage: note
-  list - list all notes
-  search <string> - searches all notes for the string
+  -h - print this message
+  -l - list all notes
+  -s <string> - searches all notes for the string
+  -n <string> - create new note with filename
 "
 }
 
@@ -30,7 +32,7 @@ fi
 
 
 
-while getopts “hls:” OPTION
+while getopts “hls:n:” OPTION
 do
   case $OPTION in
 
@@ -41,11 +43,14 @@ do
 
     ;;
     # -l returns all notes
-    # print in tree format??
     l)
       # list all files 1 per line
       # pipe to fpp to select files
       ls -d -1 $BASE/**/* | fpp
+
+      # print in tree format??
+      # tree -f --charset=ascii $BASE | fpp
+
       exit
     ;;
 
@@ -62,7 +67,13 @@ do
     ;;
 
     # -n <string> makes a new note
+    n)
+      # create new file with name given
+      touch $BASE/$OPTARG.md
+      $EDITOR $BASE/$OPTARG.md
 
+      exit
+    ;;
 
     # -f <string> tree output of a subfolder
 
