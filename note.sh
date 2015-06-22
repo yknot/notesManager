@@ -46,10 +46,9 @@ do
     l)
       # list all files 1 per line
       # pipe to fpp to select files
-      ls -d -1 $BASE/**/* | fpp
 
-      # print in tree format??
-      # tree -f --charset=ascii $BASE | fpp
+      # print in tree format
+      tree -f --charset=ascii $BASE | fpp
 
       exit
     ;;
@@ -58,10 +57,10 @@ do
     # return list of options
     s)
       # search file names
-      ls -R $BASE | grep "$OPTARG"
+      ls -d -1 $BASE/**/* | grep "$OPTARG" | fpp
 
       # search in files
-      grep "$OPTARG" $BASE -R
+      grep "$OPTARG" $BASE -R | fpp
 
       exit
     ;;
@@ -69,6 +68,8 @@ do
     # -n <string> makes a new note
     n)
       # create new file with name given
+      d=$(date "+%Y-%m-%d")
+      echo $d
       touch $BASE/$OPTARG.md
       $EDITOR $BASE/$OPTARG.md
 
