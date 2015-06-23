@@ -13,7 +13,7 @@ echo "Usage: note
   -h - print this message
   -l - list all notes
   -s <string> - searches all notes for the string
-  -n <string> - create new note with filename
+  -f <string> -n <string> - create new note with path -f and name -n
 "
 }
 
@@ -32,7 +32,7 @@ fi
 
 
 
-while getopts “hls:n:” OPTION
+while getopts “hls:f:n:” OPTION
 do
   case $OPTION in
 
@@ -53,11 +53,13 @@ do
       exit
     ;;
 
-    # -s <string> searches for all
+    # add this back to search somehow
+    #   # search file names
+    #   ls -d -1 $BASE/**/* | grep "$OPTARG" | fpp
+
+    # -s <string> searches in all notes
     # return list of options
     s)
-      # search file names
-      ls -d -1 $BASE/**/* | grep "$OPTARG" | fpp
 
       # search in files
       grep "$OPTARG" $BASE -R | fpp
@@ -65,13 +67,22 @@ do
       exit
     ;;
 
+    # -f <string> set the folder to put new note in
+    f)
+      folder=$OPTARG
+    ;;
+
     # -n <string> makes a new note
     n)
+
+      if [[ $folder = "" ]]; then
+        echo "Specify folder first"
+        exit 1
+      fi
       # create new file with name given
       d=$(date "+%Y-%m-%d")
-      echo $d
-      touch $BASE/$OPTARG.md
-      $EDITOR $BASE/$OPTARG.md
+      touch $BASE/$folder/$d-$OPTARG.md
+      $EDITOR $BASE/$folder/$d-$OPTARG.md
 
       exit
     ;;
