@@ -82,23 +82,32 @@ do
 
     # -n <string> makes a new note
     n)
-
-      if [[ $folder = "" ]]; then
-        echo "Specify folder first"
-        exit 1
-      fi
-      # create new file with name given
-      d=$(date "+%Y-%m-%d")
-      touch $BASE/$folder/$d-$OPTARG.md
-      $EDITOR $BASE/$folder/$d-$OPTARG.md
-
-      exit
+      note=$OPTARG
     ;;
-
-    # -f <string> tree output of a subfolder
 
   esac
 done
 
+if [[ "$folder" != "" ]]; then
+  if [[ "$note" != "" ]]; then
+    # create new file with date prefix in folder given
+    d=$(date "+%Y-%m-%d")
+    touch $BASE/$folder/$d-$OPTARG.md
+    $EDITOR $BASE/$folder/$d-$OPTARG.md
+  else
+    # if no note name
+    echo "Specify both folder and note"
+    printUsage
+    exit 1
+  fi
+else
+  # if no folder name
+  echo "Specify both folder and note"
+  printUsage
+  exit 1
+fi
 
+
+
+# if all else fails (no other command) list files
 listFiles
