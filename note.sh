@@ -16,22 +16,30 @@ echo "Usage: note
   -f <string> -n <string> - create new note with path -f and name -n
 "
 }
+# standard list all function
+listFiles() {
+  # list all files in tree format
+  # pipe to fpp to select files
 
-# case statement args
-if [ "$1" = "" ]; then
-  if [[ "$BASE" = "" ]]; then
-    echo "Error with base.config file"
-  fi
-  if [[ "$EDITOR" = "" ]]; then
-    echo "Error with editor.config file"
-  fi
+  # print in tree format
+  tree -f --charset=ascii $BASE | fpp
+}
 
+# make sure editor and base are set
+if [[ "$BASE" = "" ]]; then
+  echo "Error with base.config file"
   printUsage
-  exit
+  exit 1
+fi
+if [[ "$EDITOR" = "" ]]; then
+  echo "Error with editor.config file"
+  printUsage
+  exit 1
 fi
 
 
 
+# loop through all flags and their args
 while getopts “hls:f:n:” OPTION
 do
   case $OPTION in
@@ -44,25 +52,25 @@ do
     ;;
     # -l returns all notes
     l)
-      # list all files 1 per line
-      # pipe to fpp to select files
-
-      # print in tree format
-      tree -f --charset=ascii $BASE | fpp
-
+      # call list function
+      listFiles
       exit
     ;;
-
-    # add this back to search somehow
-    #   # search file names
-    #   ls -d -1 $BASE/**/* | grep "$OPTARG" | fpp
 
     # -s <string> searches in all notes
     # return list of options
     s)
+      # search file names and ouput to file
+      ls -d -1 $BASE/**/* | grep "$OPTARG" > .out
 
-      # search in files
-      grep "$OPTARG" $BASE -R | fpp
+      # search in files and append to .out
+      grep "$OPTARG" $BASE -R >> .out
+
+      # fpp for .out
+      cat .out | fpp
+
+      # clean up
+      rm .out
 
       exit
     ;;
@@ -92,4 +100,5 @@ do
   esac
 done
 
-printUsage
+
+listFiles
