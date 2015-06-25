@@ -27,16 +27,15 @@ listFiles() {
 
 # make sure editor and base are set
 if [[ "$BASE" = "" ]]; then
-  echo "Error with base.config file"
+  echo "ERROR: Can't open base.config file"
   printUsage
   exit 1
 fi
 if [[ "$EDITOR" = "" ]]; then
-  echo "Error with editor.config file"
+  echo "ERROR: Can't open editor.config file"
   printUsage
   exit 1
 fi
-
 
 
 # loop through all flags and their args
@@ -88,26 +87,27 @@ do
   esac
 done
 
-if [[ "$folder" != "" ]]; then
-  if [[ "$note" != "" ]]; then
-    # create new file with date prefix in folder given
-    d=$(date "+%Y-%m-%d")
-    touch $BASE/$folder/$d-$OPTARG.md
-    $EDITOR $BASE/$folder/$d-$OPTARG.md
-  else
-    # if no note name
-    echo "Specify both folder and note"
-    printUsage
-    exit 1
-  fi
+
+# if not making new file then list files
+if [ "$folder" = "" ] && [ "$note" = "" ]; then
+  # folder and note == ""
+
+  listFiles
+  exit
+
+elif [ "$folder" != "" ] && [ "$note" != "" ]; then
+  # folder and note != ""
+
+  # create new file with date prefix in folder given
+  d=$(date "+%Y-%m-%d")
+  touch $BASE/$folder/$d-$note.md
+  $EDITOR $BASE/$folder/$d-$note.md
+  exit
+
 else
   # if no folder name
-  echo "Specify both folder and note"
+  echo "ERROR: Specify folder and note"
   printUsage
   exit 1
+
 fi
-
-
-
-# if all else fails (no other command) list files
-listFiles
