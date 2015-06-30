@@ -36,11 +36,17 @@ ask() {
   esac
 }
 
+if [[ -z $NOTE_CONFIG ]]; then
+  echo "Need to set NOTE_CONFIG variable to config path"
+  printUsage
+  exit 1
+fi
+
 # open config files
 # read in base folder
-BASE=$(<base.config)
+BASE=$(<$NOTE_CONFIG/base.config)
 # read in text editor
-EDITOR=$(<editor.config)
+EDITOR=$(<$NOTE_CONFIG/editor.config)
 
 # make sure editor and base are set
 if [[ "$BASE" = "" ]]; then
