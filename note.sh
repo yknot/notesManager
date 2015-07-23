@@ -16,7 +16,7 @@ listFiles() {
   # pipe to fpp to select files
 
   # print in tree format
-  tree -f --charset=ascii $BASE | fpp
+  tree -f --charset=ascii $BASE -P '*.md' --prune | fpp
 }
 # ask for confirmation
 ask() {
